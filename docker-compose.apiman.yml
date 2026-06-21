@@ -1,0 +1,10 @@
+services:
+  apiman:
+    image: apiman/on-wildfly:3.1.3.Final
+    container_name: reservas-apiman
+    restart: unless-stopped
+    environment:
+      APIMAN_GATEWAY_PUBLIC_ENDPOINT: http://localhost:8090/apiman-gateway
+    ports:
+      - "8090:8080"
+      - "8443:8443"

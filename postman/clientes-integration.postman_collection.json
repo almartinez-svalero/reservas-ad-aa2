@@ -1,0 +1,399 @@
+{
+  "info": {
+    "name": "Reservas API - Clientes Integration Tests",
+    "description": "Tests de integracion de la entidad Cliente para GitHub Actions y ejecucion local con Newman.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "apiKey",
+      "value": ""
+    },
+    {
+      "key": "clienteId",
+      "value": ""
+    },
+    {
+      "key": "clienteEmail",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-API-Key",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "POST crear cliente",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('clienteEmail', `cliente.${Date.now()}@email.com`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 201 Created', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('clienteId', body.id);",
+              "",
+              "pm.test('La respuesta tiene la estructura esperada', function () {",
+              "  pm.expect(body).to.have.property('id');",
+              "  pm.expect(body).to.have.property('nombre');",
+              "  pm.expect(body).to.have.property('email');",
+              "  pm.expect(body).to.have.property('telefono');",
+              "  pm.expect(body).to.have.property('numeroVisitas');",
+              "  pm.expect(body).to.have.property('saldoPendiente');",
+              "  pm.expect(body).to.have.property('vip');",
+              "  pm.expect(body).to.have.property('fechaRegistro');",
+              "});",
+              "",
+              "pm.test('Los valores creados son correctos', function () {",
+              "  pm.expect(body.nombre).to.eql('Cliente Integracion');",
+              "  pm.expect(body.email).to.eql(pm.collectionVariables.get('clienteEmail'));",
+              "  pm.expect(body.vip).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cliente Integracion\",\n  \"email\": \"{{clienteEmail}}\",\n  \"telefono\": \"+34666000999\",\n  \"numeroVisitas\": 3,\n  \"saldoPendiente\": 0,\n  \"vip\": true,\n  \"fechaRegistro\": \"2024-01-10\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes"
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET listar clientes",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "pm.test('La respuesta es una lista', function () {",
+              "  pm.expect(body).to.be.an('array');",
+              "});",
+              "",
+              "pm.test('La lista contiene el cliente creado', function () {",
+              "  const id = Number(pm.collectionVariables.get('clienteId'));",
+              "  pm.expect(body.some(cliente => cliente.id === id)).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes"
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET cliente por id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "pm.test('Devuelve el cliente solicitado', function () {",
+              "  pm.expect(body.id).to.eql(Number(pm.collectionVariables.get('clienteId')));",
+              "  pm.expect(body.email).to.eql(pm.collectionVariables.get('clienteEmail'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "{{clienteId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PUT actualizar cliente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "pm.test('Actualiza los valores esperados', function () {",
+              "  pm.expect(body.nombre).to.eql('Cliente Integracion Actualizado');",
+              "  pm.expect(body.numeroVisitas).to.eql(4);",
+              "  pm.expect(body.vip).to.eql(false);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cliente Integracion Actualizado\",\n  \"email\": \"{{clienteEmail}}\",\n  \"telefono\": \"+34666000999\",\n  \"numeroVisitas\": 4,\n  \"saldoPendiente\": 0,\n  \"vip\": false,\n  \"fechaRegistro\": \"2024-01-10\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "{{clienteId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "PATCH modificar cliente parcialmente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "pm.test('Modifica solamente el telefono', function () {",
+              "  pm.expect(body.telefono).to.eql('+34666000888');",
+              "  pm.expect(body.email).to.eql(pm.collectionVariables.get('clienteEmail'));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"telefono\": \"+34666000888\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "{{clienteId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST error validacion email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400 Bad Request', function () {",
+              "  pm.response.to.have.status(400);",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "pm.test('La respuesta de error contiene detalles', function () {",
+              "  pm.expect(body).to.have.property('status');",
+              "  pm.expect(body).to.have.property('message');",
+              "  pm.expect(body.status).to.eql(400);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cliente Error\",\n  \"email\": \"email-no-valido\",\n  \"telefono\": \"+34666000777\",\n  \"numeroVisitas\": 1,\n  \"saldoPendiente\": 0,\n  \"vip\": false,\n  \"fechaRegistro\": \"2024-01-10\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes"
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET error cliente no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404 Not Found', function () {",
+              "  pm.response.to.have.status(404);",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "pm.test('La respuesta indica recurso no encontrado', function () {",
+              "  pm.expect(body.status).to.eql(404);",
+              "  pm.expect(body.message).to.include('No existe cliente');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "999999"
+          ]
+        }
+      }
+    },
+    {
+      "name": "DELETE eliminar cliente",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 204 No Content', function () {",
+              "  pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "{{clienteId}}"
+          ]
+        }
+      }
+    }
+  ]
+}

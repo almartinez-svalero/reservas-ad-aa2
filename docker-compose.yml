@@ -11,5 +11,34 @@ services:
       - "5432:5432"
     volumes:
       - reservas_postgres_data:/var/lib/postgresql/data
+
+  mariadb:
+    image: mariadb:11
+    container_name: reservas-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: reservas_db
+      MARIADB_USER: reservas_user
+      MARIADB_PASSWORD: reservas_pass
+      MARIADB_ROOT_PASSWORD: root_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - reservas_mariadb_data:/var/lib/mysql
+
+  api:
+    build: .
+    container_name: reservas-api
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/reservas_db
+      SPRING_DATASOURCE_USERNAME: reservas_user
+      SPRING_DATASOURCE_PASSWORD: reservas_pass
+    ports:
+      - "8080:8080"
 volumes:
   reservas_postgres_data:
+  reservas_mariadb_data:
