@@ -20,6 +20,7 @@ Evidencias principales:
 - Automatizacion GitHub Actions: `.github/workflows/api-tests.yml`.
 - APIMan local y gateway con token: `docker-compose.apiman.yml` y `docs/apiman.md`.
 - Despliegue AWS: `docs/aws.md` y `scripts/aws-user-data.sh`.
+- Estado AWS: despliegue preparado; prueba real pendiente hasta que AWS complete la activacion de cuenta y deje acceder a EC2.
 - Seguridad JWT: `src/main/java/com/aa/reservas/config/SecurityConfig.java` y `src/main/java/com/aa/reservas/controller/AuthController.java`.
 - Checklist completa: `docs/checklist-aa2.md`.
 
