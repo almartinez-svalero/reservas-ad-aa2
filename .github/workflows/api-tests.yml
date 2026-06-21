@@ -71,4 +71,6 @@ jobs:
         run: npm install -g newman
 
       - name: Run Postman integration tests
-        run: newman run postman/clientes-integration.postman_collection.json --env-var baseUrl=http://localhost:8080
+        run: |
+          newman run postman/clientes-integration.postman_collection.json --env-var baseUrl=http://localhost:8080
+          newman run postman/all-entities-integration.postman_collection.json --env-var baseUrl=http://localhost:8080

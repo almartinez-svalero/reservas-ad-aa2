@@ -8,6 +8,7 @@
 - [x] Produccion configurada con MariaDB.
 - [x] Despliegue AWS preparado con `docker-compose.aws.yml`, `.env.example` y `scripts/aws-user-data.sh`.
 - [x] Tests de integracion Postman para la entidad Cliente.
+- [x] Tests de integracion Postman ampliados para Restaurante, Cliente, Mesa, Empleado y Reserva.
 - [x] GitHub Actions con Maven, PostgreSQL, API arrancada y Newman.
 - [x] APIMan preparado con Docker Compose, entorno Postman, token `X-API-Key` y politicas de limite de uso.
 - [x] API securizada con JWT.
