@@ -10,6 +10,10 @@
       "value": "http://localhost:8080"
     },
     {
+      "key": "apiKey",
+      "value": ""
+    },
+    {
       "key": "clienteId",
       "value": ""
     },
@@ -18,6 +22,26 @@
       "value": ""
     }
   ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-API-Key",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
   "item": [
     {
       "name": "POST crear cliente",
