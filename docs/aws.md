@@ -2,6 +2,18 @@
 
 La propuesta de despliegue usa una instancia EC2 con Docker Compose. Es sencilla de defender porque ejecuta la misma API empaquetada en Docker junto con MariaDB en perfil `prod`.
 
+## Estado de la prueba real
+
+El despliegue en AWS queda preparado y documentado, pero la prueba real en EC2 queda pendiente hasta que AWS permita utilizar los servicios de la cuenta.
+
+Durante la comprobacion, la consola redirige al alta incompleta de cuenta:
+
+```text
+https://portal.aws.amazon.com/billing/signup/incomplete
+```
+
+Por este motivo no se ha podido crear todavia la instancia EC2 ni obtener una IP publica de prueba. En cuanto AWS complete la activacion de la cuenta y deje acceder a EC2, se puede ejecutar el procedimiento de este documento sin modificar el codigo de la aplicacion.
+
 ## Servicios desplegados
 
 ```text
@@ -24,6 +36,18 @@ Security Group:
 - SSH 22 solo desde tu IP
 - HTTP 8080 desde tu IP o desde 0.0.0.0/0 si hay que ensenarlo
 - HTTP 8090 desde tu IP o desde 0.0.0.0/0 si hay que ensenarlo
+```
+
+Pasos cuando AWS active la cuenta:
+
+```text
+1. Entrar en EC2 en la region eu-west-3.
+2. Crear una instancia Amazon Linux 2023.
+3. Seleccionar un tipo compatible con la capa gratuita si esta disponible.
+4. Crear o reutilizar un par de claves SSH.
+5. Configurar el Security Group con los puertos 22, 8080 y 8090.
+6. Pegar el contenido de scripts/aws-user-data.sh en User Data.
+7. Lanzar la instancia y esperar a que Docker Compose termine de levantar los servicios.
 ```
 
 ## 2. Usar el script de arranque
@@ -86,6 +110,15 @@ Contenedores:
 ```bash
 docker ps
 docker logs reservas-aws-api
+```
+
+Prueba esperada:
+
+```text
+1. La API responde en http://IP_PUBLICA_EC2:8080/v3/api-docs.
+2. Swagger abre en http://IP_PUBLICA_EC2:8080/swagger-ui.html.
+3. APIMan abre en http://IP_PUBLICA_EC2:8090/apimanui.
+4. La coleccion Postman puede ejecutarse cambiando baseUrl por la IP publica.
 ```
 
 ## 5. APIMan en AWS
