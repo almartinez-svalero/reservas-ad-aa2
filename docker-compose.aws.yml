@@ -1,0 +1,48 @@
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: reservas-aws-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - reservas_aws_mariadb_data:/var/lib/mysql
+    networks:
+      - reservas-net
+
+  api:
+    build: .
+    container_name: reservas-aws-api
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      APP_LOG_LEVEL: ${APP_LOG_LEVEL}
+    ports:
+      - "8080:8080"
+    networks:
+      - reservas-net
+
+  apiman:
+    image: apiman/on-wildfly:3.1.3.Final
+    container_name: reservas-aws-apiman
+    restart: unless-stopped
+    environment:
+      APIMAN_GATEWAY_PUBLIC_ENDPOINT: ${APIMAN_GATEWAY_PUBLIC_ENDPOINT}
+    ports:
+      - "8090:8080"
+    networks:
+      - reservas-net
+
+volumes:
+  reservas_aws_mariadb_data:
+
+networks:
+  reservas-net:
