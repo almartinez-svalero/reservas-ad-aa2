@@ -1,0 +1,1627 @@
+{
+  "info": {
+    "name": "Reservas API - All Entities Integration Tests",
+    "description": "Tests de integracion para todas las entidades de la API con JWT automatico.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "apiKey",
+      "value": ""
+    },
+    {
+      "key": "jwtUsername",
+      "value": "admin"
+    },
+    {
+      "key": "jwtPassword",
+      "value": "admin123"
+    },
+    {
+      "key": "jwtToken",
+      "value": ""
+    },
+    {
+      "key": "restauranteId",
+      "value": ""
+    },
+    {
+      "key": "clienteId",
+      "value": ""
+    },
+    {
+      "key": "mesaId",
+      "value": ""
+    },
+    {
+      "key": "empleadoId",
+      "value": ""
+    },
+    {
+      "key": "reservaId",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwtToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "POST login JWT",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('jwtToken', body.accessToken);",
+              "pm.test('La respuesta contiene token JWT', function () {",
+              "  pm.expect(body.tokenType).to.eql('Bearer');",
+              "  pm.expect(body.accessToken).to.be.a('string').and.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{jwtUsername}}\",\n  \"password\": \"{{jwtPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST crear restaurante",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/restaurantes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "restaurantes"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Restaurante Integracion\",\n  \"direccion\": \"Calle Testing 1, Zaragoza\",\n  \"telefono\": \"+34976000999\",\n  \"aforoMaximo\": 90,\n  \"valoracionMedia\": 4.6,\n  \"activo\": true,\n  \"fechaApertura\": \"2022-01-10\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 201 Created', function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('restauranteId', body.id);",
+              "pm.test('Restaurante creado con estructura y valores correctos', function () {",
+              "  pm.expect(body).to.include.keys('id','nombre','direccion','telefono','aforoMaximo','valoracionMedia','activo','fechaApertura');",
+              "  pm.expect(body.nombre).to.eql('Restaurante Integracion');",
+              "  pm.expect(body.activo).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET listar restaurantes",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/restaurantes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "restaurantes"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Lista contiene restaurante creado', function () { pm.expect(body.some(r => r.id === Number(pm.collectionVariables.get('restauranteId')))).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET restaurante por id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/restaurantes/{{restauranteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "restaurantes",
+            "{{restauranteId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Devuelve restaurante solicitado', function () { pm.expect(body.id).to.eql(Number(pm.collectionVariables.get('restauranteId'))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUT actualizar restaurante",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/restaurantes/{{restauranteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "restaurantes",
+            "{{restauranteId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Restaurante Integracion Actualizado\",\n  \"direccion\": \"Calle Testing 2, Zaragoza\",\n  \"telefono\": \"+34976000998\",\n  \"aforoMaximo\": 100,\n  \"valoracionMedia\": 4.7,\n  \"activo\": true,\n  \"fechaApertura\": \"2022-01-10\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Actualiza restaurante', function () { pm.expect(body.nombre).to.eql('Restaurante Integracion Actualizado'); pm.expect(body.aforoMaximo).to.eql(100); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PATCH restaurante parcial",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/restaurantes/{{restauranteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "restaurantes",
+            "{{restauranteId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"valoracionMedia\": 4.8\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Modifica valoracion', function () { pm.expect(body.valoracionMedia).to.eql(4.8); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST restaurante error validacion",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/restaurantes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "restaurantes"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"\",\n  \"direccion\": \"Calle Error\",\n  \"telefono\": \"+34976000000\",\n  \"aforoMaximo\": 0,\n  \"valoracionMedia\": 6,\n  \"activo\": true,\n  \"fechaApertura\": \"2024-01-10\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400 Bad Request', function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test('Error contiene campos de validacion', function () { pm.expect(body.status).to.eql(400); pm.expect(body).to.have.property('fieldErrors'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET restaurante error 404",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/restaurantes/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "restaurantes",
+            "999999"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404 Not Found', function () { pm.response.to.have.status(404); });",
+              "const body = pm.response.json();",
+              "pm.test('Mensaje indica restaurante inexistente', function () { pm.expect(body.message).to.include('No existe restaurante'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST crear cliente",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cliente Integracion Total\",\n  \"email\": \"{{clienteEmail}}\",\n  \"telefono\": \"+34666000999\",\n  \"numeroVisitas\": 3,\n  \"saldoPendiente\": 0,\n  \"vip\": true,\n  \"fechaRegistro\": \"2024-01-10\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('clienteEmail', `cliente.total.${Date.now()}@email.com`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 201 Created', function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('clienteId', body.id);",
+              "pm.test('Cliente creado correctamente', function () { pm.expect(body.email).to.eql(pm.collectionVariables.get('clienteEmail')); pm.expect(body.vip).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET cliente por id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "{{clienteId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Devuelve cliente solicitado', function () { pm.expect(body.id).to.eql(Number(pm.collectionVariables.get('clienteId'))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUT actualizar cliente",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "{{clienteId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cliente Integracion Total Actualizado\",\n  \"email\": \"{{clienteEmail}}\",\n  \"telefono\": \"+34666000998\",\n  \"numeroVisitas\": 4,\n  \"saldoPendiente\": 0,\n  \"vip\": false,\n  \"fechaRegistro\": \"2024-01-10\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Actualiza cliente', function () { pm.expect(body.nombre).to.eql('Cliente Integracion Total Actualizado'); pm.expect(body.vip).to.eql(false); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PATCH cliente parcial",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "{{clienteId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"telefono\": \"+34666000997\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Modifica telefono', function () { pm.expect(body.telefono).to.eql('+34666000997'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST cliente error validacion",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cliente Error\",\n  \"email\": \"email-no-valido\",\n  \"telefono\": \"+34666000777\",\n  \"numeroVisitas\": 1,\n  \"saldoPendiente\": 0,\n  \"vip\": false,\n  \"fechaRegistro\": \"2024-01-10\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400 Bad Request', function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test('Error de email', function () { pm.expect(body.status).to.eql(400); pm.expect(body).to.have.property('fieldErrors'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET cliente error 404",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "999999"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404 Not Found', function () { pm.response.to.have.status(404); });",
+              "const body = pm.response.json();",
+              "pm.test('Mensaje indica cliente inexistente', function () { pm.expect(body.message).to.include('No existe cliente'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST crear mesa",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/mesas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "mesas"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numero\": 10,\n  \"capacidad\": 4,\n  \"ubicacion\": \"Salon pruebas\",\n  \"reservable\": true,\n  \"suplementoTerraza\": 0,\n  \"fechaAlta\": \"2024-01-10\",\n  \"restaurante\": { \"id\": {{restauranteId}} }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 201 Created', function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('mesaId', body.id);",
+              "pm.test('Mesa creada correctamente', function () { pm.expect(body.capacidad).to.eql(4); pm.expect(body.restaurante.id).to.eql(Number(pm.collectionVariables.get('restauranteId'))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET mesa por id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/mesas/{{mesaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "mesas",
+            "{{mesaId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Devuelve mesa solicitada', function () { pm.expect(body.id).to.eql(Number(pm.collectionVariables.get('mesaId'))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUT actualizar mesa",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/mesas/{{mesaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "mesas",
+            "{{mesaId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numero\": 11,\n  \"capacidad\": 5,\n  \"ubicacion\": \"Salon actualizado\",\n  \"reservable\": true,\n  \"suplementoTerraza\": 1.5,\n  \"fechaAlta\": \"2024-01-10\",\n  \"restaurante\": { \"id\": {{restauranteId}} }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Actualiza mesa', function () { pm.expect(body.numero).to.eql(11); pm.expect(body.capacidad).to.eql(5); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PATCH mesa parcial",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/mesas/{{mesaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "mesas",
+            "{{mesaId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ubicacion\": \"Salon patch\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Modifica ubicacion', function () { pm.expect(body.ubicacion).to.eql('Salon patch'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST mesa error restaurante inexistente",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/mesas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "mesas"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numero\": 99,\n  \"capacidad\": 2,\n  \"ubicacion\": \"Error\",\n  \"reservable\": true,\n  \"suplementoTerraza\": 0,\n  \"fechaAlta\": \"2024-01-10\",\n  \"restaurante\": { \"id\": 999999 }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404 Not Found', function () { pm.response.to.have.status(404); });",
+              "const body = pm.response.json();",
+              "pm.test('Mensaje indica restaurante inexistente', function () { pm.expect(body.message).to.include('No existe restaurante'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET mesa error 404",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/mesas/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "mesas",
+            "999999"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404 Not Found', function () { pm.response.to.have.status(404); });",
+              "const body = pm.response.json();",
+              "pm.test('Mensaje indica mesa inexistente', function () { pm.expect(body.message).to.include('No existe mesa'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST crear empleado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/empleados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "empleados"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Empleado Integracion\",\n  \"email\": \"{{empleadoEmail}}\",\n  \"puesto\": \"Sala\",\n  \"sueldoHora\": 12.5,\n  \"activo\": true,\n  \"fechaContratacion\": \"2023-02-10\",\n  \"restaurante\": { \"id\": {{restauranteId}} }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('empleadoEmail', `empleado.total.${Date.now()}@reservas.com`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 201 Created', function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('empleadoId', body.id);",
+              "pm.test('Empleado creado correctamente', function () { pm.expect(body.email).to.eql(pm.collectionVariables.get('empleadoEmail')); pm.expect(body.restaurante.id).to.eql(Number(pm.collectionVariables.get('restauranteId'))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET empleado por id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/empleados/{{empleadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "empleados",
+            "{{empleadoId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Devuelve empleado solicitado', function () { pm.expect(body.id).to.eql(Number(pm.collectionVariables.get('empleadoId'))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUT actualizar empleado",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/empleados/{{empleadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "empleados",
+            "{{empleadoId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Empleado Integracion Actualizado\",\n  \"email\": \"{{empleadoEmail}}\",\n  \"puesto\": \"Encargado\",\n  \"sueldoHora\": 13.5,\n  \"activo\": true,\n  \"fechaContratacion\": \"2023-02-10\",\n  \"restaurante\": { \"id\": {{restauranteId}} }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Actualiza empleado', function () { pm.expect(body.nombre).to.eql('Empleado Integracion Actualizado'); pm.expect(body.puesto).to.eql('Encargado'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PATCH empleado parcial",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/empleados/{{empleadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "empleados",
+            "{{empleadoId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"activo\": false\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Modifica activo', function () { pm.expect(body.activo).to.eql(false); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST empleado error validacion",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/empleados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "empleados"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Empleado Error\",\n  \"email\": \"email-no-valido\",\n  \"puesto\": \"Sala\",\n  \"sueldoHora\": 12.5,\n  \"activo\": true,\n  \"fechaContratacion\": \"2023-02-10\",\n  \"restaurante\": { \"id\": {{restauranteId}} }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400 Bad Request', function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test('Error de email', function () { pm.expect(body.status).to.eql(400); pm.expect(body).to.have.property('fieldErrors'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET empleado error 404",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/empleados/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "empleados",
+            "999999"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404 Not Found', function () { pm.response.to.have.status(404); });",
+              "const body = pm.response.json();",
+              "pm.test('Mensaje indica empleado inexistente', function () { pm.expect(body.message).to.include('No existe empleado'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST crear reserva",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservas"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"{{reservaCodigo}}\",\n  \"fechaReserva\": \"2026-01-15\",\n  \"horaReserva\": \"21:00:00\",\n  \"numeroPersonas\": 4,\n  \"importeSenal\": 20,\n  \"confirmada\": true,\n  \"observaciones\": \"Reserva integracion total\",\n  \"cliente\": { \"id\": {{clienteId}} },\n  \"mesa\": { \"id\": {{mesaId}} },\n  \"empleado\": { \"id\": {{empleadoId}} }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('reservaCodigo', `RES-TOTAL-${Date.now()}`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 201 Created', function () { pm.response.to.have.status(201); });",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('reservaId', body.id);",
+              "pm.test('Reserva creada correctamente', function () { pm.expect(body.codigo).to.eql(pm.collectionVariables.get('reservaCodigo')); pm.expect(body.cliente.id).to.eql(Number(pm.collectionVariables.get('clienteId'))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET listar reservas",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservas"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Lista contiene reserva creada', function () { pm.expect(body.some(r => r.id === Number(pm.collectionVariables.get('reservaId')))).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET reserva por id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas/{{reservaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservas",
+            "{{reservaId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Devuelve reserva solicitada', function () { pm.expect(body.id).to.eql(Number(pm.collectionVariables.get('reservaId'))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PUT actualizar reserva",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas/{{reservaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservas",
+            "{{reservaId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"{{reservaCodigo}}\",\n  \"fechaReserva\": \"2026-01-16\",\n  \"horaReserva\": \"21:30:00\",\n  \"numeroPersonas\": 3,\n  \"importeSenal\": 25,\n  \"confirmada\": true,\n  \"observaciones\": \"Reserva actualizada\",\n  \"cliente\": { \"id\": {{clienteId}} },\n  \"mesa\": { \"id\": {{mesaId}} },\n  \"empleado\": { \"id\": {{empleadoId}} }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Actualiza reserva', function () { pm.expect(body.numeroPersonas).to.eql(3); pm.expect(body.observaciones).to.eql('Reserva actualizada'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PATCH reserva parcial",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas/{{reservaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservas",
+            "{{reservaId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observaciones\": \"Reserva patch\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('Modifica observaciones', function () { pm.expect(body.observaciones).to.eql('Reserva patch'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST reserva error capacidad",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservas"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"{{reservaCodigoError}}\",\n  \"fechaReserva\": \"2026-02-01\",\n  \"horaReserva\": \"22:00:00\",\n  \"numeroPersonas\": 99,\n  \"importeSenal\": 20,\n  \"confirmada\": true,\n  \"observaciones\": \"Error capacidad\",\n  \"cliente\": { \"id\": {{clienteId}} },\n  \"mesa\": { \"id\": {{mesaId}} },\n  \"empleado\": { \"id\": {{empleadoId}} }\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('reservaCodigoError', `RES-ERR-${Date.now()}`);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 400 Bad Request', function () { pm.response.to.have.status(400); });",
+              "const body = pm.response.json();",
+              "pm.test('Mensaje indica capacidad superada', function () { pm.expect(body.message).to.include('supera la capacidad'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET reserva error 404",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservas",
+            "999999"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 404 Not Found', function () { pm.response.to.have.status(404); });",
+              "const body = pm.response.json();",
+              "pm.test('Mensaje indica reserva inexistente', function () { pm.expect(body.message).to.include('No existe reserva'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "DELETE eliminar reserva",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/reservas/{{reservaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "reservas",
+            "{{reservaId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 204 No Content', function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "DELETE eliminar empleado",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/empleados/{{empleadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "empleados",
+            "{{empleadoId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 204 No Content', function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "DELETE eliminar mesa",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/mesas/{{mesaId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "mesas",
+            "{{mesaId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 204 No Content', function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "DELETE eliminar cliente",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "clientes",
+            "{{clienteId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 204 No Content', function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "DELETE eliminar restaurante",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/restaurantes/{{restauranteId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "restaurantes",
+            "{{restauranteId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 204 No Content', function () { pm.response.to.have.status(204); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

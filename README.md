@@ -16,6 +16,7 @@ Evidencias principales:
 - Configuracion por entornos: `application-dev.properties` y `application-prod.properties`.
 - Produccion con MariaDB: `pom.xml`, `docker-compose.yml` y `docker-compose.aws.yml`.
 - Tests de integracion Postman: `postman/clientes-integration.postman_collection.json`.
+- Tests Postman completos para todas las entidades: `postman/all-entities-integration.postman_collection.json`.
 - Automatizacion GitHub Actions: `.github/workflows/api-tests.yml`.
 - APIMan local y gateway con token: `docker-compose.apiman.yml` y `docs/apiman.md`.
 - Despliegue AWS: `docs/aws.md` y `scripts/aws-user-data.sh`.
@@ -54,6 +55,7 @@ Tests Postman con Newman, con la API arrancada en local:
 
 ```bash
 newman run postman/clientes-integration.postman_collection.json --env-var baseUrl=http://localhost:8080
+newman run postman/all-entities-integration.postman_collection.json --env-var baseUrl=http://localhost:8080
 ```
 
 La coleccion hace login automaticamente contra:
