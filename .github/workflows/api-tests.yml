@@ -1,0 +1,74 @@
+name: API tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  postman-integration-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: reservas_db
+          POSTGRES_USER: reservas_user
+          POSTGRES_PASSWORD: reservas_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U reservas_user -d reservas_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run unit tests
+        run: mvn -B test
+
+      - name: Start API
+        env:
+          SPRING_PROFILES_ACTIVE: dev
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/reservas_db
+          SPRING_DATASOURCE_USERNAME: reservas_user
+          SPRING_DATASOURCE_PASSWORD: reservas_pass
+        run: |
+          nohup mvn -B spring-boot:run > app.log 2>&1 &
+          for i in {1..45}; do
+            if curl -fsS http://localhost:8080/api/clientes > /dev/null; then
+              echo "API started"
+              exit 0
+            fi
+            sleep 2
+          done
+          cat app.log
+          exit 1
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman integration tests
+        run: newman run postman/clientes-integration.postman_collection.json --env-var baseUrl=http://localhost:8080
