@@ -58,7 +58,7 @@ jobs:
         run: |
           nohup mvn -B spring-boot:run > app.log 2>&1 &
           for i in {1..45}; do
-            if curl -fsS http://localhost:8080/api/clientes > /dev/null; then
+            if curl -fsS http://localhost:8080/v3/api-docs > /dev/null; then
               echo "API started"
               exit 0
             fi
