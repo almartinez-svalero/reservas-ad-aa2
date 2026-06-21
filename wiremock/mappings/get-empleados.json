@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/empleados"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+      {
+        "nombre": "Carlos Ruiz",
+        "email": "carlos.ruiz@bjreservas.com",
+        "puesto": "Encargado de sala",
+        "sueldoHora": 12.5,
+        "activo": true,
+        "fechaContratacion": "2023-05-20",
+        "restaurante": {
+          "id": 1
+        }
+      }
+    ]
+  }
+}

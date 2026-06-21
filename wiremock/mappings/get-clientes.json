@@ -1,0 +1,23 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/clientes"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+      {
+        "nombre": "Laura Gómez",
+        "email": "laura.gomez@email.com",
+        "telefono": "+34666000111",
+        "numeroVisitas": 5,
+        "saldoPendiente": 0.0,
+        "vip": true,
+        "fechaRegistro": "2024-01-10"
+      }
+    ]
+  }
+}

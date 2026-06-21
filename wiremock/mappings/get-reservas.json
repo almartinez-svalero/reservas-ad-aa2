@@ -1,0 +1,32 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/reservas"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+      {
+        "codigo": "RES-001",
+        "fechaReserva": "2026-01-15",
+        "horaReserva": "21:00:00",
+        "numeroPersonas": 4,
+        "importeSenal": 20.0,
+        "confirmada": true,
+        "observaciones": "Cena familiar",
+        "cliente": {
+          "id": 1
+        },
+        "mesa": {
+          "id": 1
+        },
+        "empleado": {
+          "id": 1
+        }
+      }
+    ]
+  }
+}

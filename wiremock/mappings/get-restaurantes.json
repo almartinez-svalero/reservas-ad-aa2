@@ -1,0 +1,23 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/restaurantes"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+      {
+        "nombre": "BJ Reservas Centro",
+        "direccion": "Calle Alfonso I 10, Zaragoza",
+        "telefono": "+34976000001",
+        "aforoMaximo": 80,
+        "valoracionMedia": 4.5,
+        "activo": true,
+        "fechaApertura": "2022-03-15"
+      }
+    ]
+  }
+}

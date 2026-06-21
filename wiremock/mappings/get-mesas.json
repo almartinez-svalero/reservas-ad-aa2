@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/mesas"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+      {
+        "numero": 1,
+        "capacidad": 4,
+        "ubicacion": "Salón principal",
+        "reservable": true,
+        "suplementoTerraza": 0.0,
+        "fechaAlta": "2024-01-01",
+        "restaurante": {
+          "id": 1
+        }
+      }
+    ]
+  }
+}

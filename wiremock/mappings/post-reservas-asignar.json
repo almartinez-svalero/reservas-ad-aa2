@@ -1,0 +1,23 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/reservas/asignar"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": 1,
+      "codigo": "RES-MOCK-001",
+      "fechaReserva": "2026-01-20",
+      "horaReserva": "21:30:00",
+      "numeroPersonas": 4,
+      "confirmada": true,
+      "nombreCliente": "Laura Gómez",
+      "numeroMesa": 1,
+      "empleadoResponsable": "Carlos Ruiz"
+    }
+  }
+}

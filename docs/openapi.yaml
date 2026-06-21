@@ -1,0 +1,511 @@
+openapi: 3.0.3
+info:
+  title: API de Gestión de Reservas
+  version: 1.0.0
+  description: API REST desarrollada con Spring Boot para la AA1 de Acceso a Datos. Gestiona restaurantes, mesas, clientes, empleados y reservas.
+servers:
+  - url: http://localhost:8080
+    description: Servidor local
+tags:
+  - name: Restaurantes
+  - name: Clientes
+  - name: Mesas
+  - name: Empleados
+  - name: Reservas
+paths:
+  /api/restaurantes:
+    get:
+      tags: [Restaurantes]
+      summary: Listar restaurantes con filtros
+      parameters:
+        - in: query
+          name: nombre
+          schema: { type: string }
+        - in: query
+          name: activo
+          schema: { type: boolean }
+        - in: query
+          name: aforoMinimo
+          schema: { type: integer }
+      responses:
+        '200': { description: Listado obtenido correctamente }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Restaurantes]
+      summary: Crear restaurante
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Restaurante' }
+            examples:
+              ejemplo1:
+                value: { nombre: 'BJ Reservas Centro', direccion: 'Calle Alfonso I 10, Zaragoza', telefono: '+34976000001', aforoMaximo: 80, valoracionMedia: 4.5, activo: true, fechaApertura: '2022-03-15' }
+      responses:
+        '201': { description: Restaurante creado }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/restaurantes/{id}:
+    get:
+      tags: [Restaurantes]
+      summary: Obtener restaurante por id
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      responses:
+        '200': { description: Restaurante encontrado }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Restaurantes]
+      summary: Actualizar restaurante completo
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      requestBody: { $ref: '#/components/requestBodies/RestauranteBody' }
+      responses:
+        '200': { description: Restaurante actualizado }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [Restaurantes]
+      summary: Modificar parcialmente restaurante
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      requestBody: { $ref: '#/components/requestBodies/PatchBody' }
+      responses:
+        '200': { description: Restaurante modificado parcialmente }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Restaurantes]
+      summary: Eliminar restaurante
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      responses:
+        '204': { description: Restaurante eliminado }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/restaurantes/{id}/resumen:
+    get:
+      tags: [Restaurantes]
+      summary: Endpoint extra con DTO y relaciones
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      responses:
+        '200': { description: Resumen del restaurante }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/restaurantes/native/activos:
+    get:
+      tags: [Restaurantes]
+      summary: Consulta SQL nativa de restaurantes activos
+      responses:
+        '200': { description: Restaurantes activos }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api/clientes:
+    get:
+      tags: [Clientes]
+      summary: Listar clientes con filtros
+      parameters:
+        - in: query
+          name: nombre
+          schema: { type: string }
+        - in: query
+          name: email
+          schema: { type: string }
+        - in: query
+          name: vip
+          schema: { type: boolean }
+      responses:
+        '200': { description: Listado obtenido correctamente }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Clientes]
+      summary: Crear cliente
+      requestBody: { $ref: '#/components/requestBodies/ClienteBody' }
+      responses:
+        '201': { description: Cliente creado }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/clientes/{id}:
+    get:
+      tags: [Clientes]
+      summary: Obtener cliente por id
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      responses:
+        '200': { description: Cliente encontrado }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    put:
+      tags: [Clientes]
+      summary: Actualizar cliente completo
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      requestBody: { $ref: '#/components/requestBodies/ClienteBody' }
+      responses:
+        '200': { description: Cliente actualizado }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [Clientes]
+      summary: Modificar parcialmente cliente
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      requestBody: { $ref: '#/components/requestBodies/PatchBody' }
+      responses:
+        '200': { description: Cliente modificado parcialmente }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [Clientes]
+      summary: Eliminar cliente
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      responses:
+        '204': { description: Cliente eliminado }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/clientes/{id}/historial:
+    get:
+      tags: [Clientes]
+      summary: Endpoint extra con historial de reservas del cliente
+      parameters: [ { $ref: '#/components/parameters/IdPath' } ]
+      responses:
+        '200': { description: Historial del cliente }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/clientes/jpql/vip-con-reservas:
+    get:
+      tags: [Clientes]
+      summary: Consulta JPQL de clientes VIP con reservas
+      responses:
+        '200': { description: Clientes VIP con reservas }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api/mesas:
+    get:
+      tags: [Mesas]
+      summary: Listar mesas con filtros
+      parameters:
+        - in: query
+          name: restauranteId
+          schema: { type: integer }
+        - in: query
+          name: capacidadMinima
+          schema: { type: integer }
+        - in: query
+          name: reservable
+          schema: { type: boolean }
+      responses:
+        '200': { description: Listado obtenido correctamente }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Mesas]
+      summary: Crear mesa
+      requestBody: { $ref: '#/components/requestBodies/MesaBody' }
+      responses:
+        '201': { description: Mesa creada }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/mesas/{id}:
+    get: { tags: [Mesas], summary: Obtener mesa por id, parameters: [ { $ref: '#/components/parameters/IdPath' } ], responses: { '200': { description: Mesa encontrada }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+    put: { tags: [Mesas], summary: Actualizar mesa completa, parameters: [ { $ref: '#/components/parameters/IdPath' } ], requestBody: { $ref: '#/components/requestBodies/MesaBody' }, responses: { '200': { description: Mesa actualizada }, '400': { $ref: '#/components/responses/BadRequest' }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+    patch: { tags: [Mesas], summary: Modificar parcialmente mesa, parameters: [ { $ref: '#/components/parameters/IdPath' } ], requestBody: { $ref: '#/components/requestBodies/PatchBody' }, responses: { '200': { description: Mesa modificada }, '400': { $ref: '#/components/responses/BadRequest' }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+    delete: { tags: [Mesas], summary: Eliminar mesa, parameters: [ { $ref: '#/components/parameters/IdPath' } ], responses: { '204': { description: Mesa eliminada }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+  /api/mesas/jpql/disponibles:
+    get:
+      tags: [Mesas]
+      summary: Consulta JPQL de mesas disponibles
+      parameters:
+        - in: query
+          name: restauranteId
+          required: true
+          schema: { type: integer }
+        - in: query
+          name: capacidadMinima
+          schema: { type: integer, default: 1 }
+      responses:
+        '200': { description: Mesas disponibles }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api/empleados:
+    get:
+      tags: [Empleados]
+      summary: Listar empleados con filtros
+      parameters:
+        - in: query
+          name: restauranteId
+          schema: { type: integer }
+        - in: query
+          name: puesto
+          schema: { type: string }
+        - in: query
+          name: activo
+          schema: { type: boolean }
+      responses:
+        '200': { description: Listado obtenido correctamente }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Empleados]
+      summary: Crear empleado
+      requestBody: { $ref: '#/components/requestBodies/EmpleadoBody' }
+      responses:
+        '201': { description: Empleado creado }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/empleados/{id}:
+    get: { tags: [Empleados], summary: Obtener empleado por id, parameters: [ { $ref: '#/components/parameters/IdPath' } ], responses: { '200': { description: Empleado encontrado }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+    put: { tags: [Empleados], summary: Actualizar empleado completo, parameters: [ { $ref: '#/components/parameters/IdPath' } ], requestBody: { $ref: '#/components/requestBodies/EmpleadoBody' }, responses: { '200': { description: Empleado actualizado }, '400': { $ref: '#/components/responses/BadRequest' }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+    patch: { tags: [Empleados], summary: Modificar parcialmente empleado, parameters: [ { $ref: '#/components/parameters/IdPath' } ], requestBody: { $ref: '#/components/requestBodies/PatchBody' }, responses: { '200': { description: Empleado modificado }, '400': { $ref: '#/components/responses/BadRequest' }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+    delete: { tags: [Empleados], summary: Eliminar empleado, parameters: [ { $ref: '#/components/parameters/IdPath' } ], responses: { '204': { description: Empleado eliminado }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+  /api/empleados/native/por-restaurante/{restauranteId}:
+    get:
+      tags: [Empleados]
+      summary: Consulta SQL nativa de empleados por restaurante
+      parameters:
+        - in: path
+          name: restauranteId
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Empleados del restaurante }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api/reservas:
+    get:
+      tags: [Reservas]
+      summary: Listar reservas con filtros
+      parameters:
+        - in: query
+          name: clienteId
+          schema: { type: integer }
+        - in: query
+          name: fechaReserva
+          schema: { type: string, format: date }
+        - in: query
+          name: confirmada
+          schema: { type: boolean }
+      responses:
+        '200': { description: Listado obtenido correctamente }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [Reservas]
+      summary: Crear reserva
+      requestBody: { $ref: '#/components/requestBodies/ReservaBody' }
+      responses:
+        '201': { description: Reserva creada }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/reservas/{id}:
+    get: { tags: [Reservas], summary: Obtener reserva por id, parameters: [ { $ref: '#/components/parameters/IdPath' } ], responses: { '200': { description: Reserva encontrada }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+    put: { tags: [Reservas], summary: Actualizar reserva completa, parameters: [ { $ref: '#/components/parameters/IdPath' } ], requestBody: { $ref: '#/components/requestBodies/ReservaBody' }, responses: { '200': { description: Reserva actualizada }, '400': { $ref: '#/components/responses/BadRequest' }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+    patch: { tags: [Reservas], summary: Modificar parcialmente reserva, parameters: [ { $ref: '#/components/parameters/IdPath' } ], requestBody: { $ref: '#/components/requestBodies/PatchBody' }, responses: { '200': { description: Reserva modificada }, '400': { $ref: '#/components/responses/BadRequest' }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+    delete: { tags: [Reservas], summary: Eliminar reserva, parameters: [ { $ref: '#/components/parameters/IdPath' } ], responses: { '204': { description: Reserva eliminada }, '404': { $ref: '#/components/responses/NotFound' }, '500': { $ref: '#/components/responses/InternalError' } } }
+  /api/reservas/asignar:
+    post:
+      tags: [Reservas]
+      summary: Crear reserva mediante DTO usando ids de relaciones
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReservaCreateDTO' }
+            examples:
+              ejemplo1:
+                value: { codigo: 'RES-002', fechaReserva: '2026-01-20', horaReserva: '21:30:00', numeroPersonas: 4, importeSenal: 20.0, confirmada: true, observaciones: 'Mesa junto a ventana', clienteId: 1, mesaId: 1, empleadoId: 1 }
+      responses:
+        '201': { description: Reserva creada con DTO }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/reservas/jpql/confirmadas-por-restaurante/{restauranteId}:
+    get:
+      tags: [Reservas]
+      summary: Consulta JPQL de reservas confirmadas por restaurante
+      parameters:
+        - in: path
+          name: restauranteId
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Reservas confirmadas }
+        '500': { $ref: '#/components/responses/InternalError' }
+  /api/reservas/native/por-dia:
+    get:
+      tags: [Reservas]
+      summary: Consulta SQL nativa de reservas por fecha
+      parameters:
+        - in: query
+          name: fecha
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200': { description: Reservas de ese día }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '500': { $ref: '#/components/responses/InternalError' }
+components:
+  parameters:
+    IdPath:
+      in: path
+      name: id
+      required: true
+      schema: { type: integer, format: int64 }
+  responses:
+    BadRequest:
+      description: Error 400 por validación o petición incorrecta
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    NotFound:
+      description: Error 404 si no existe el recurso solicitado
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+    InternalError:
+      description: Error 500 interno del servidor
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ApiError' }
+  requestBodies:
+    RestauranteBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Restaurante' }
+          examples:
+            ejemplo1: { value: { nombre: 'BJ Reservas Centro', direccion: 'Calle Alfonso I 10, Zaragoza', telefono: '+34976000001', aforoMaximo: 80, valoracionMedia: 4.5, activo: true, fechaApertura: '2022-03-15' } }
+            ejemplo2: { value: { nombre: 'BJ Reservas Norte', direccion: 'Avda. Cataluña 20, Zaragoza', telefono: '+34976000002', aforoMaximo: 60, valoracionMedia: 4.1, activo: true, fechaApertura: '2021-06-01' } }
+    ClienteBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Cliente' }
+          examples:
+            ejemplo1: { value: { nombre: 'Laura Gómez', email: 'laura.gomez@email.com', telefono: '+34666000111', numeroVisitas: 5, saldoPendiente: 0.0, vip: true, fechaRegistro: '2024-01-10' } }
+            ejemplo2: { value: { nombre: 'Mario Pérez', email: 'mario.perez@email.com', telefono: '+34666000222', numeroVisitas: 1, saldoPendiente: 0.0, vip: false, fechaRegistro: '2025-05-18' } }
+    MesaBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Mesa' }
+          examples:
+            ejemplo1: { value: { numero: 1, capacidad: 4, ubicacion: 'Salón principal', reservable: true, suplementoTerraza: 0.0, fechaAlta: '2024-01-01', restaurante: { id: 1 } } }
+            ejemplo2: { value: { numero: 2, capacidad: 2, ubicacion: 'Terraza', reservable: true, suplementoTerraza: 3.0, fechaAlta: '2024-03-01', restaurante: { id: 1 } } }
+    EmpleadoBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Empleado' }
+          examples:
+            ejemplo1: { value: { nombre: 'Carlos Ruiz', email: 'carlos.ruiz@bjreservas.com', puesto: 'Encargado de sala', sueldoHora: 12.5, activo: true, fechaContratacion: '2023-05-20', restaurante: { id: 1 } } }
+            ejemplo2: { value: { nombre: 'Ana López', email: 'ana.lopez@bjreservas.com', puesto: 'Camarera', sueldoHora: 10.8, activo: true, fechaContratacion: '2024-02-14', restaurante: { id: 1 } } }
+    ReservaBody:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Reserva' }
+          examples:
+            ejemplo1: { value: { codigo: 'RES-001', fechaReserva: '2026-01-15', horaReserva: '21:00:00', numeroPersonas: 4, importeSenal: 20.0, confirmada: true, observaciones: 'Cena familiar', cliente: { id: 1 }, mesa: { id: 1 }, empleado: { id: 1 } } }
+            ejemplo2: { value: { codigo: 'RES-002', fechaReserva: '2026-01-16', horaReserva: '14:30:00', numeroPersonas: 2, importeSenal: 10.0, confirmada: false, observaciones: 'Pendiente confirmar', cliente: { id: 1 }, mesa: { id: 1 }, empleado: { id: 1 } } }
+    PatchBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: true
+          examples:
+            ejemplo1: { value: { activo: false } }
+            ejemplo2: { value: { telefono: '+34976111222', valoracionMedia: 4.8 } }
+  schemas:
+    Restaurante:
+      type: object
+      required: [nombre, direccion, telefono]
+      properties:
+        id: { type: integer, format: int64 }
+        nombre: { type: string }
+        direccion: { type: string }
+        telefono: { type: string }
+        aforoMaximo: { type: integer }
+        valoracionMedia: { type: number, format: float }
+        activo: { type: boolean }
+        fechaApertura: { type: string, format: date }
+    Cliente:
+      type: object
+      required: [nombre, email, telefono]
+      properties:
+        id: { type: integer, format: int64 }
+        nombre: { type: string }
+        email: { type: string, format: email }
+        telefono: { type: string }
+        numeroVisitas: { type: integer }
+        saldoPendiente: { type: number, format: float }
+        vip: { type: boolean }
+        fechaRegistro: { type: string, format: date }
+    Mesa:
+      type: object
+      required: [ubicacion, restaurante]
+      properties:
+        id: { type: integer, format: int64 }
+        numero: { type: integer }
+        capacidad: { type: integer }
+        ubicacion: { type: string }
+        reservable: { type: boolean }
+        suplementoTerraza: { type: number, format: float }
+        fechaAlta: { type: string, format: date }
+        restaurante: { $ref: '#/components/schemas/Restaurante' }
+    Empleado:
+      type: object
+      required: [nombre, email, puesto, restaurante]
+      properties:
+        id: { type: integer, format: int64 }
+        nombre: { type: string }
+        email: { type: string, format: email }
+        puesto: { type: string }
+        sueldoHora: { type: number, format: float }
+        activo: { type: boolean }
+        fechaContratacion: { type: string, format: date }
+        restaurante: { $ref: '#/components/schemas/Restaurante' }
+    Reserva:
+      type: object
+      required: [codigo, fechaReserva, horaReserva, cliente, mesa, empleado]
+      properties:
+        id: { type: integer, format: int64 }
+        codigo: { type: string }
+        fechaReserva: { type: string, format: date }
+        horaReserva: { type: string, example: '21:00:00' }
+        numeroPersonas: { type: integer }
+        importeSenal: { type: number, format: float }
+        confirmada: { type: boolean }
+        observaciones: { type: string }
+        cliente: { $ref: '#/components/schemas/Cliente' }
+        mesa: { $ref: '#/components/schemas/Mesa' }
+        empleado: { $ref: '#/components/schemas/Empleado' }
+    ReservaCreateDTO:
+      type: object
+      required: [codigo, fechaReserva, horaReserva, clienteId, mesaId, empleadoId]
+      properties:
+        codigo: { type: string }
+        fechaReserva: { type: string, format: date }
+        horaReserva: { type: string, example: '21:30:00' }
+        numeroPersonas: { type: integer }
+        importeSenal: { type: number, format: float }
+        confirmada: { type: boolean }
+        observaciones: { type: string }
+        clienteId: { type: integer, format: int64 }
+        mesaId: { type: integer, format: int64 }
+        empleadoId: { type: integer, format: int64 }
+    ApiError:
+      type: object
+      properties:
+        timestamp: { type: string }
+        status: { type: integer }
+        error: { type: string }
+        message: { type: string }
+        path: { type: string }
+        fieldErrors: { type: object }
