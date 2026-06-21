@@ -59,6 +59,14 @@ docker compose -f docker-compose.aws.yml up -d --build
 
 No se suben passwords reales al repositorio.
 
+Tambien conviene cambiar las credenciales JWT:
+
+```text
+APP_SECURITY_USERNAME
+APP_SECURITY_PASSWORD
+APP_SECURITY_JWT_SECRET
+```
+
 ## 4. Comprobaciones
 
 API:

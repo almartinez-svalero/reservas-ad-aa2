@@ -87,10 +87,28 @@ PEGAR_AQUI_EL_API_KEY_DE_APIMAN
 
 por el API Key generado por el contrato de APIMan.
 
-La coleccion envia el token en la cabecera:
+La coleccion envia el token de APIMan en la cabecera:
 
 ```text
 X-API-Key: {{apiKey}}
+```
+
+Ademas, la propia API esta securizada con JWT. La primera peticion de la coleccion hace:
+
+```text
+POST /api/auth/login
+```
+
+y guarda el token JWT en:
+
+```text
+{{jwtToken}}
+```
+
+El resto de operaciones se ejecutan con:
+
+```text
+Authorization: Bearer {{jwtToken}}
 ```
 
 URL gestionada esperada:

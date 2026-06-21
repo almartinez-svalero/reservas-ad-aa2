@@ -20,29 +20,87 @@
     {
       "key": "clienteEmail",
       "value": ""
+    },
+    {
+      "key": "jwtUsername",
+      "value": "admin"
+    },
+    {
+      "key": "jwtPassword",
+      "value": "admin123"
+    },
+    {
+      "key": "jwtToken",
+      "value": ""
     }
   ],
   "auth": {
-    "type": "apikey",
-    "apikey": [
+    "type": "bearer",
+    "bearer": [
       {
-        "key": "key",
-        "value": "X-API-Key",
-        "type": "string"
-      },
-      {
-        "key": "value",
-        "value": "{{apiKey}}",
-        "type": "string"
-      },
-      {
-        "key": "in",
-        "value": "header",
+        "key": "token",
+        "value": "{{jwtToken}}",
         "type": "string"
       }
     ]
   },
   "item": [
+    {
+      "name": "POST login JWT",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Estado 200 OK', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "pm.collectionVariables.set('jwtToken', body.accessToken);",
+              "",
+              "pm.test('La respuesta contiene token JWT', function () {",
+              "  pm.expect(body.tokenType).to.eql('Bearer');",
+              "  pm.expect(body.accessToken).to.be.a('string').and.not.empty;",
+              "  pm.expect(body.expiresInMinutes).to.be.above(0);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{jwtUsername}}\",\n  \"password\": \"{{jwtPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
     {
       "name": "POST crear cliente",
       "event": [
@@ -93,6 +151,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
           }
         ],
         "body": {
@@ -138,7 +200,12 @@
       ],
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/api/clientes",
           "host": [
@@ -174,7 +241,12 @@
       ],
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
           "host": [
@@ -216,6 +288,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
           }
         ],
         "body": {
@@ -262,6 +338,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
           }
         ],
         "body": {
@@ -309,6 +389,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
           }
         ],
         "body": {
@@ -350,7 +434,12 @@
       ],
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/api/clientes/999999",
           "host": [
@@ -381,7 +470,12 @@
       ],
       "request": {
         "method": "DELETE",
-        "header": [],
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "{{apiKey}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
           "host": [

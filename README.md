@@ -19,6 +19,7 @@ Evidencias principales:
 - Automatizacion GitHub Actions: `.github/workflows/api-tests.yml`.
 - APIMan local y gateway con token: `docker-compose.apiman.yml` y `docs/apiman.md`.
 - Despliegue AWS: `docs/aws.md` y `scripts/aws-user-data.sh`.
+- Seguridad JWT: `src/main/java/com/aa/reservas/config/SecurityConfig.java` y `src/main/java/com/aa/reservas/controller/AuthController.java`.
 - Checklist completa: `docs/checklist-aa2.md`.
 
 ### Endpoints versionados
@@ -53,6 +54,18 @@ Tests Postman con Newman, con la API arrancada en local:
 
 ```bash
 newman run postman/clientes-integration.postman_collection.json --env-var baseUrl=http://localhost:8080
+```
+
+La coleccion hace login automaticamente contra:
+
+```text
+POST /api/auth/login
+```
+
+Credenciales por defecto de desarrollo:
+
+```text
+admin / admin123
 ```
 
 Proyecto de API REST con **Spring Boot**, **JPA/Hibernate** y **PostgreSQL** para gestionar reservas de restaurante.

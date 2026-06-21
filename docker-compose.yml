@@ -37,6 +37,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/reservas_db
       SPRING_DATASOURCE_USERNAME: reservas_user
       SPRING_DATASOURCE_PASSWORD: reservas_pass
+      APP_SECURITY_USERNAME: admin
+      APP_SECURITY_PASSWORD: admin123
+      APP_SECURITY_JWT_SECRET: reservas-api-aa2-secret-key-for-docker-compose-2026
     ports:
       - "8080:8080"
 volumes:

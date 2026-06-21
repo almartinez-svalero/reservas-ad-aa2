@@ -1,11 +1,13 @@
 package com.aa.reservas.controller;
 
+import com.aa.reservas.config.JwtService;
 import com.aa.reservas.exception.GlobalExceptionHandler;
 import com.aa.reservas.model.Cliente;
 import com.aa.reservas.service.ClienteService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -26,10 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ClienteV2Controller.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import(GlobalExceptionHandler.class)
 class ClienteV2ControllerTest {
     @Autowired MockMvc mockMvc;
     @MockBean ClienteService service;
+    @MockBean JwtService jwtService;
 
     @Test
     void findAll_v2DevuelveSalidaResumida() throws Exception {

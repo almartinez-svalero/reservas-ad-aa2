@@ -10,6 +10,8 @@
 - [x] Tests de integracion Postman para la entidad Cliente.
 - [x] GitHub Actions con Maven, PostgreSQL, API arrancada y Newman.
 - [x] APIMan preparado con Docker Compose, entorno Postman, token `X-API-Key` y politicas de limite de uso.
+- [x] API securizada con JWT.
+- [x] Postman obtiene automaticamente el JWT y lo reutiliza en las peticiones.
 
 ## Git Flow
 
