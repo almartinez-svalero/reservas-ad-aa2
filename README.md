@@ -1,5 +1,60 @@
 # Reservas API - AA1 Acceso a Datos
 
+## AA2 - Testing y Gestion de APIs
+
+Esta version amplia la entrega inicial para la Actividad de Aprendizaje de 2 Evaluacion.
+
+Repositorio GitHub:
+
+```text
+https://github.com/almartinez-svalero/reservas-ad-aa2
+```
+
+Evidencias principales:
+
+- Versionado de endpoints en `GET`, `POST`, `PUT` y `DELETE`: `src/main/java/com/aa/reservas/controller/ClienteV2Controller.java`.
+- Configuracion por entornos: `application-dev.properties` y `application-prod.properties`.
+- Produccion con MariaDB: `pom.xml`, `docker-compose.yml` y `docker-compose.aws.yml`.
+- Tests de integracion Postman: `postman/clientes-integration.postman_collection.json`.
+- Automatizacion GitHub Actions: `.github/workflows/api-tests.yml`.
+- APIMan local y gateway con token: `docker-compose.apiman.yml` y `docs/apiman.md`.
+- Despliegue AWS: `docs/aws.md` y `scripts/aws-user-data.sh`.
+- Checklist completa: `docs/checklist-aa2.md`.
+
+### Endpoints versionados
+
+La v1 se mantiene sin romper compatibilidad. La v2 se publica en:
+
+```text
+GET    /api/v2/clientes
+POST   /api/v2/clientes
+PUT    /api/v2/clientes/{id}
+DELETE /api/v2/clientes/{id}
+```
+
+Cambios principales de v2:
+
+- Entrada mediante `ClienteV2RequestDTO`.
+- Salida mediante `ClienteV2ResponseDTO`.
+- `telefono` pasa a exponerse como `telefonoContacto`.
+- Se anade el campo calculado `nivel`: `VIP` o `ESTANDAR`.
+- Se anade el campo calculado `deudaPendiente`.
+- `DELETE` devuelve una confirmacion JSON.
+
+### Ejecutar tests de AA2
+
+Tests Java:
+
+```bash
+mvn test
+```
+
+Tests Postman con Newman, con la API arrancada en local:
+
+```bash
+newman run postman/clientes-integration.postman_collection.json --env-var baseUrl=http://localhost:8080
+```
+
 Proyecto de API REST con **Spring Boot**, **JPA/Hibernate** y **PostgreSQL** para gestionar reservas de restaurante.
 
 El supuesto real elegido es una aplicación interna para que un restaurante gestione clientes, mesas, empleados y reservas.
