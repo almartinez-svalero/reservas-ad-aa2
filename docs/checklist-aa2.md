@@ -14,6 +14,7 @@
 - [x] APIMan preparado con Docker Compose, entorno Postman, token `X-API-Key` y politicas de limite de uso.
 - [x] API securizada con JWT.
 - [x] Postman obtiene automaticamente el JWT y lo reutiliza en las peticiones.
+- [x] Informe explicativo de requisitos incluido en `docs/Informe-AA2-Requisitos.pdf`.
 
 ## Git Flow
 
@@ -30,6 +31,7 @@ Ramas usadas:
 - `feature/postman-all-entities`
 - `feature/update-github-actions`
 - `feature/documentacion-aws-pendiente`
+- `feature/informe-pdf-aa2`
 
 Repositorio remoto:
 
